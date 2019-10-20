@@ -59,9 +59,7 @@ const Listing = ({items}) => {
     <div className="wrapper">
       <div className="item-list">
         {
-          items.map(item => {
-            return <Card item={item} key={item.listing_id}/>
-          })
+          items.map(item => <Card item={item} key={item.listing_id}/>)
         }
       </div>
     </div>
