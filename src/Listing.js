@@ -1,49 +1,66 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+const Title = ({title}) => {
+  if (title.length < 51) {
+    return <p className="item-title">{title}</p>
+  }
+  return <p className="item-title">{`${title.slice(0, 50)}...`}</p>
+}
+
+const Price = ({currencyCode, price}) => {
+  if (currencyCode === 'USD') {
+    return <p className="item-price">${price}</p>
+  }
+  if(currencyCode === 'EUR') {
+    return <p className="item-price">€{price}</p>
+  }
+  return <p className="item-price">{`${price} ${currencyCode}`}</p>
+}
+
+const Quantity = ({quantity}) => {
+  let quantityLevel = null;
+
+  if (quantity <= 10) {
+    quantityLevel = 'low';
+  }
+  if (quantity >= 10) {
+    quantityLevel = 'medium';
+  }
+  if (quantity > 20) {
+    quantityLevel = 'high';
+  }
+
+  return <p className={`item-quantity level-${quantityLevel}`}>{`${quantity} left`}</p>
+}
+
+const Card = ({item}) => {
+  if (item.state === 'active') {
+    return (
+      <div className="item">
+        <div className="item-image">
+          <a href={item.url}>
+            <img src={item.MainImage.url_570xN} />
+          </a>
+        </div>
+        <div className="item-details">
+          <Title title={item.title} />
+          <Price currencyCode={item.currency_code} price={item.price} />
+          <Quantity quantity={item.quantity} />
+        </div>
+      </div>
+    )
+  }
+  return null;
+}
+
 const Listing = ({items}) => {
   return (
     <div className="wrapper">
       <div className="item-list">
         {
           items.map(item => {
-            return (
-              item.state === 'active'
-              &&
-              <div key={item.listing_id} className="item">
-                <div className="item-image">
-                  <a href={item.url}>
-                    <img src={item.MainImage.url_570xN} />
-                  </a>
-                </div>
-                <div className="item-details">
-                  {
-                    item.title < 51 
-                    ? <p className="item-title">{item.title}</p> 
-                    : <p className="item-title">{`${item.title.slice(0, 50)}...`}</p>
-                  }
-                  {
-                    item.currency_code === 'USD'
-                    ? <p className="item-price">${item.price}</p>
-                    : item.currency_code === 'EUR'
-                      ? <p className="item-price">€{item.price}</p>
-                      : <p className="item-price">{`${item.price} ${item.currency_code}`}</p>
-                  }
-                  {
-                    item.quantity <= 10 
-                    && <p className={`item-quantity level-low`}>{`${item.quantity} left`}</p>
-                  }
-                  {
-                    item.quantity >= 10 && item.quantity <= 20 
-                    && <p className={`item-quantity level-medium`}>{`${item.quantity} left`}</p>
-                  }
-                  {
-                    item.quantity > 20 
-                    && <p className={`item-quantity level-high`}>{`${item.quantity} left`}</p>
-                  }
-                </div>
-              </div>
-            )
+            return <Card item={item} key={item.listing_id}/>
           })
         }
       </div>
